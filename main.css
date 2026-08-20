@@ -1,0 +1,49 @@
+:root{
+  --bg1:#071026;
+  --accent:#00ff99;
+  --panel: rgba(0,0,0,0.6);
+  --muted: #9fbfb0;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;}
+body{background:radial-gradient(circle at 20% 10%, #071026 0%, #0f2430 40%, #08121b 100%);color:#e6f7ff;display:flex;align-items:center;justify-content:center;padding:24px;}
+
+.app{width:980px;max-width:98%;display:flex;flex-direction:column;align-items:center;gap:10px}
+.title{margin:0 0 6px 0;color:var(--accent);text-shadow:0 0 8px rgba(0,255,153,0.08)}
+
+.layout{display:flex;gap:16px;align-items:flex-start}
+canvas#gameCanvas{width:400px;height:600px;border-radius:12px;border:3px solid rgba(0,255,153,0.12);box-shadow:0 10px 30px rgba(0,0,0,0.6);background:#000;}
+.ui{width:480px;max-width:48%;display:flex;flex-direction:column;gap:12px}
+
+/* Panels */
+.panel{background:var(--panel);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);min-height:120px}
+.visible{display:block}
+.hidden{display:none}
+
+.btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+.btn.primary{background:linear-gradient(180deg,var(--accent),#00c57a);color:#011;padding:10px 16px}
+.btn.secondary{background:#123; color:#dff;border:1px solid rgba(255,255,255,0.04)}
+
+.btn-row{display:flex;gap:10px;align-items:center}
+.muted{color:var(--muted);font-size:13px}
+.small{font-size:13px}
+
+/* Level list scroll (vertical) */
+.levels-list{max-height:360px;overflow:auto;padding:6px;display:flex;flex-direction:column;gap:8px}
+.level-item{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.1));border:1px solid rgba(255,255,255,0.03)}
+.level-item.locked{opacity:0.45;filter:grayscale(0.2)}
+.level-number{font-weight:700}
+.level-meta{color:var(--muted);font-size:13px}
+.level-actions{display:flex;gap:6px}
+
+/* HUD */
+.hud{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.hud div{background:rgba(0,0,0,0.28);padding:8px;border-radius:8px;}
+
+/* Footer */
+.footer{margin-top:8px;color:var(--muted);font-size:13px;text-align:center;}
+
+/* boss hp bar (floating top) */
+.boss-bar{position:fixed;left:50%;transform:translateX(-50%);top:18px;width:520px;max-width:92%;height:16px;background:rgba(255,255,255,0.06);border-radius:10px;border:1px solid rgba(255,255,255,0.04);display:none}
+.boss-bar .inner{height:100%;background:linear-gradient(90deg,#ff6b6b,#ff2e2e);width:100%;border-radius:10px}

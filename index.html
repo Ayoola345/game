@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Space Shooter — Adventure & Infinity</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="main.css" />
+</head>
+<body>
+  <div class="app">
+    <h1 class="title">🚀 Space Shooter</h1>
+
+    <div class="layout">
+      <canvas id="gameCanvas" width="400" height="600" aria-label="Game canvas"></canvas>
+
+      <div class="ui">
+        <!-- Main Menu -->
+        <div id="menu" class="panel visible">
+          <h2>Choose Mode</h2>
+          <div class="btn-row">
+            <button id="btnAdventure" class="btn primary">Adventure (1–50)</button>
+            <button id="btnInfinity" class="btn secondary">Infinity (3 lives)</button>
+          </div>
+          <p class="muted">Adventure: no high score. Finish each level to unlock the next. Infinity: endless, high score saved.</p>
+        </div>
+
+        <!-- Level Select (list, vertical scroll) -->
+        <div id="levelList" class="panel hidden">
+          <h2>Adventure — Levels</h2>
+          <div id="levelsContainer" class="levels-list" tabindex="0"></div>
+          <div class="level-controls">
+            <button id="backToMenuFromList" class="btn secondary">Back to Menu</button>
+          </div>
+        </div>
+
+        <!-- Start Level -->
+        <div id="levelStart" class="panel hidden">
+          <h2 id="levelStartTitle">Level 1</h2>
+          <p id="levelStartInfo">Objective</p>
+          <div class="btn-row">
+            <button id="startLevelBtn" class="btn primary">Start Level</button>
+            <button id="cancelStartBtn" class="btn secondary">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Pause -->
+        <div id="pausePanel" class="panel hidden">
+          <h2>Paused</h2>
+          <div class="btn-row">
+            <button id="resumeBtn" class="btn primary">Resume</button>
+            <button id="backToMenuFromPause" class="btn secondary">Menu</button>
+          </div>
+        </div>
+
+        <!-- Game Over -->
+        <div id="gameOverPanel" class="panel hidden">
+          <h2>Game Over</h2>
+          <p id="gameOverText">Score: 0</p>
+          <div class="btn-row">
+            <button id="retryBtn" class="btn primary">Retry</button>
+            <button id="goToMenuBtn" class="btn secondary">Menu</button>
+          </div>
+        </div>
+
+        <div class="hud small">
+          <div id="hudMode">Mode: —</div>
+          <div id="hudInfo">Score: 0</div>
+          <div id="hudLives">Lives: —</div>
+          <div id="hudHigh" class="muted small">High: 0</div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">Use Arrow keys to move • P = Pause/Resume • Space to fire extra</footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
