@@ -13,7 +13,17 @@ body{background:radial-gradient(circle at 20% 10%, #071026 0%, #0f2430 40%, #081
 .title{margin:0 0 6px 0;color:var(--accent);text-shadow:0 0 8px rgba(0,255,153,0.08)}
 
 .layout{display:flex;gap:16px;align-items:flex-start}
-canvas#gameCanvas{width:400px;height:600px;border-radius:12px;border:3px solid rgba(0,255,153,0.12);box-shadow:0 10px 30px rgba(0,0,0,0.6);background:#000;}
+canvas#gameCanvas{
+  width:400px;
+  height:600px;
+  max-width:100%;
+  max-height:70vh;
+  aspect-ratio:2 / 3;
+  border-radius:12px;
+  border:3px solid rgba(0,255,153,0.12);
+  box-shadow:0 10px 30px rgba(0,0,0,0.6);
+  background:#000;
+}
 .ui{width:480px;max-width:48%;display:flex;flex-direction:column;gap:12px}
 
 /* Panels */
@@ -47,3 +57,34 @@ canvas#gameCanvas{width:400px;height:600px;border-radius:12px;border:3px solid r
 /* boss hp bar (floating top) */
 .boss-bar{position:fixed;left:50%;transform:translateX(-50%);top:18px;width:520px;max-width:92%;height:16px;background:rgba(255,255,255,0.06);border-radius:10px;border:1px solid rgba(255,255,255,0.04);display:none}
 .boss-bar .inner{height:100%;background:linear-gradient(90deg,#ff6b6b,#ff2e2e);width:100%;border-radius:10px}
+
+/* ================================
+   MOBILE GAME SCREEN
+================================ */
+@media (max-width: 720px) {
+  body {
+    padding:10px;
+  }
+
+  .app {
+    width:100%;
+    max-width:100%;
+  }
+
+  .layout {
+    width:100%;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  canvas#gameCanvas {
+    width:min(100%, 400px);
+    height:auto;
+    max-height:70vh;
+  }
+
+  .ui {
+    width:100%;
+    max-width:400px;
+  }
+}
