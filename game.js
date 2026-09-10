@@ -655,6 +655,54 @@ document.addEventListener('keydown', (e)=> {
   if(e.code === 'Space'){ if(gameStarted && !gamePaused && !gameOver){ bullets.push({ x: player.x + player.width/2 - 3, y: player.y + 8, width:6, height:12, speed:10 }); sfxShoot(); } }
 });
 document.addEventListener('keyup', (e)=> { if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.code)) keys[e.code]=false; });
+/* ---------------- Mobile touch controls ---------------- */
+canvas.addEventListener('pointerdown', (e) => {
+  if (!gameStarted || gamePaused || gameOver || !player) return;
+
+  canvas.setPointerCapture(e.pointerId);
+  movePlayerWithTouch(e);
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  if (!gameStarted || gamePaused || gameOver || !player) return;
+  if (!canvas.hasPointerCapture(e.pointerId)) return;
+
+  movePlayerWithTouch(e);
+});
+
+canvas.addEventListener('pointerup', (e) => {
+  if (canvas.hasPointerCapture(e.pointerId)) {
+    canvas.releasePointerCapture(e.pointerId);
+  }
+});
+
+canvas.addEventListener('pointercancel', (e) => {
+  if (canvas.hasPointerCapture(e.pointerId)) {
+    canvas.releasePointerCapture(e.pointerId);
+  }
+});
+
+function movePlayerWithTouch(e) {
+  const rect = canvas.getBoundingClientRect();
+
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+
+  const touchX = (e.clientX - rect.left) * scaleX;
+  const touchY = (e.clientY - rect.top) * scaleY;
+
+  player.x = clamp(
+    touchX - player.width / 2,
+    0,
+    canvas.width - player.width
+  );
+
+  player.y = clamp(
+    touchY - player.height / 2,
+    0,
+    canvas.height - player.height
+  );
+}
 
 window.addEventListener('blur', ()=> { if(gameStarted && !gameOver && !gamePaused){ pauseGame(); } });
 
