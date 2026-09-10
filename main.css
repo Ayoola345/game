@@ -131,3 +131,25 @@ canvas#gameCanvas{
 canvas#gameCanvas {
   touch-action: none;
 }
+/* ================================
+   GAME PAUSE BUTTON
+================================ */
+.game-area {
+  position: relative;
+  display: inline-block;
+}
+
+.game-pause-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  color: #00ff99;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+}

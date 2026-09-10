@@ -1,4 +1,5 @@
 const canvas = document.getElementById('gameCanvas');
+const pauseBtn = document.getElementById('pauseBtn');
 const ctx = canvas.getContext('2d');
 
 const menu = document.getElementById('menu');
@@ -312,19 +313,29 @@ function pauseGame(){
   if(!gameStarted || gamePaused) return;
   gamePaused = true;
   pausedAt = performance.now();
+  pauseBtn.textContent = '▶';
   showPanel(pausePanel);
 }
 function resumeGame(){
   if(!gameStarted || !gamePaused) return;
   const now = performance.now();
   const delta = now - pausedAt;
-  // shift timers forward so we continue where left off
   lastSpawnTime += delta;
   lastAutoFire += delta;
   lastBossShoot += delta;
   gamePaused = false;
+  pauseBtn.textContent = '⏸';
   showPanel(null);
 }
+pauseBtn.addEventListener('click', () => {
+  if (!gameStarted || gameOver) return;
+
+  if (gamePaused) {
+    resumeGame();
+  } else {
+    pauseGame();
+  }
+});
 
 /* ---------------- Game over handlers ---------------- */
 function onAdventureFail(reason=''){
