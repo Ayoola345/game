@@ -2,84 +2,122 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Space Shooter — Adventure & Infinity</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#070b18" />
+  <meta name="description" content="Pilot your ship through an arcade space shooter. Take on 50 Adventure levels or chase your high score in Infinity mode." />
+  <title>Starfall — Space Shooter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="main.css" />
 </head>
 <body>
-  <div class="app">
-    <h1 class="title">🚀 Space Shooter</h1>
+  <main class="app">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Starfall home">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span>STARFALL<span class="brand-period">.</span></span>
+      </a>
+      <div class="topbar-note"><span class="status-dot"></span> ARCADE FLIGHT SYSTEMS</div>
+    </header>
+
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">THE GALAXY IS YOURS</p>
+      <h1 id="page-title">Own the <span>orbit.</span></h1>
+      <p class="intro-copy">Lock in, pilot. Your next high score is out there.</p>
+    </section>
 
     <div class="layout">
-      <div class="game-area">
-  <canvas id="gameCanvas" width="400" height="600" aria-label="Game canvas"></canvas>
+      <section class="game-column" aria-label="Game screen">
+        <div class="game-area">
+          <canvas id="gameCanvas" width="400" height="600" role="img" aria-label="Space shooter game. Use arrow keys or touch to move, and space to fire."></canvas>
+          <button id="pauseBtn" class="game-pause-btn" type="button" aria-label="Pause game" title="Pause game">
+            <span aria-hidden="true">Ⅱ</span>
+          </button>
+        </div>
+        <div class="control-hint">
+          <span><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> MOVE</span>
+          <span><kbd>SPACE</kbd> FIRE</span>
+          <span><kbd>P</kbd> PAUSE</span>
+          <span class="touch-hint">TOUCH TO MOVE</span>
+        </div>
+      </section>
 
-  <button id="pauseBtn" class="game-pause-btn" type="button" aria-label="Pause game">
-    ⏸
-  </button>
-</div>
-      
-
-      <div class="ui">
-        <!-- Main Menu -->
+      <aside class="ui" aria-label="Game controls and status">
         <div id="menu" class="panel visible">
-          <h2>Choose Mode</h2>
-          <div class="btn-row">
-            <button id="btnAdventure" class="btn primary">Adventure (1–50)</button>
-            <button id="btnInfinity" class="btn secondary">Infinity (3 lives)</button>
+          <p class="panel-kicker">SELECT YOUR RUN</p>
+          <h2>Choose your mission</h2>
+          <p class="panel-copy">Two ways to make your mark among the stars.</p>
+          <div class="mode-list">
+            <button id="btnAdventure" class="mode-card" type="button">
+              <span class="mode-icon adventure-icon" aria-hidden="true">✧</span>
+              <span class="mode-description"><strong>Adventure</strong><small>50 levels · Boss encounters</small></span>
+              <span class="mode-arrow" aria-hidden="true">→</span>
+            </button>
+            <button id="btnInfinity" class="mode-card" type="button">
+              <span class="mode-icon infinity-icon" aria-hidden="true">∞</span>
+              <span class="mode-description"><strong>Infinity</strong><small>Endless run · 3 lives</small></span>
+              <span class="mode-arrow" aria-hidden="true">→</span>
+            </button>
           </div>
-          <p class="muted">Adventure: no high score. Finish each level to unlock the next. Infinity: endless, high score saved.</p>
+          <p class="mode-note">Collect twin bullets, shields, and hearts. Watch for swift, drifting comets as Infinity heats up. Your high score is saved here.</p>
         </div>
 
-        <!-- Level Select (list, vertical scroll) -->
         <div id="levelList" class="panel hidden">
-          <h2>Adventure — Levels</h2>
-          <div id="levelsContainer" class="levels-list" tabindex="0"></div>
+          <p class="panel-kicker">ADVENTURE MODE</p>
+          <h2>Choose a level</h2>
+          <p class="panel-copy">Clear each mission to unlock the next.</p>
+          <div id="levelsContainer" class="levels-list" tabindex="0" aria-label="Available levels"></div>
           <div class="level-controls">
-            <button id="backToMenuFromList" class="btn secondary">Back to Menu</button>
+            <button id="backToMenuFromList" class="btn secondary" type="button">← Back to missions</button>
           </div>
         </div>
 
-        <!-- Start Level -->
         <div id="levelStart" class="panel hidden">
+          <p class="panel-kicker">MISSION BRIEFING</p>
           <h2 id="levelStartTitle">Level 1</h2>
-          <p id="levelStartInfo">Objective</p>
+          <p id="levelStartInfo" class="panel-copy">Objective</p>
           <div class="btn-row">
-            <button id="startLevelBtn" class="btn primary">Start Level</button>
-            <button id="cancelStartBtn" class="btn secondary">Cancel</button>
+            <button id="startLevelBtn" class="btn primary" type="button">Launch mission <span aria-hidden="true">→</span></button>
+            <button id="cancelStartBtn" class="btn secondary" type="button">Back</button>
           </div>
         </div>
 
-        <!-- Pause -->
         <div id="pausePanel" class="panel hidden">
-          <h2>Paused</h2>
+          <p class="panel-kicker">FLIGHT PAUSED</p>
+          <h2>Take a breather.</h2>
+          <p class="panel-copy">Your mission is on hold. Ready when you are.</p>
           <div class="btn-row">
-            <button id="resumeBtn" class="btn primary">Resume</button>
-            <button id="backToMenuFromPause" class="btn secondary">Menu</button>
+            <button id="resumeBtn" class="btn primary" type="button">Resume flight <span aria-hidden="true">→</span></button>
+            <button id="backToMenuFromPause" class="btn secondary" type="button">Quit to menu</button>
           </div>
         </div>
 
-        <!-- Game Over -->
         <div id="gameOverPanel" class="panel hidden">
-          <h2>Game Over</h2>
-          <p id="gameOverText">Score: 0</p>
+          <p class="panel-kicker">FLIGHT COMPLETE</p>
+          <h2>Run it back?</h2>
+          <p id="gameOverText" class="panel-copy">Final Score: 0</p>
           <div class="btn-row">
-            <button id="retryBtn" class="btn primary">Retry</button>
-            <button id="goToMenuBtn" class="btn secondary">Menu</button>
+            <button id="retryBtn" class="btn primary" type="button">Play again <span aria-hidden="true">→</span></button>
+            <button id="goToMenuBtn" class="btn secondary" type="button">Main menu</button>
           </div>
         </div>
 
-        <div class="hud small">
-          <div id="hudMode">Mode: —</div>
-          <div id="hudInfo">Score: 0</div>
-          <div id="hudLives">Lives: —</div>
-          <div id="hudHigh" class="muted small">High: 0</div>
-        </div>
-      </div>
+        <section class="hud" aria-label="Current game statistics" aria-live="polite">
+          <p class="panel-kicker">FLIGHT DATA</p>
+          <div class="hud-grid">
+            <div class="hud-stat"><span class="hud-label">MISSION</span><strong id="hudMode">—</strong></div>
+            <div class="hud-stat"><span class="hud-label">SCORE</span><strong id="hudInfo">0</strong></div>
+            <div class="hud-stat"><span class="hud-label">LIVES</span><strong id="hudLives">—</strong></div>
+            <div class="hud-stat"><span class="hud-label">BEST RUN</span><strong id="hudHigh">0</strong></div>
+          </div>
+          <p id="powerupStatus" class="powerup-status" aria-live="polite">No active power-up</p>
+        </section>
+      </aside>
     </div>
 
-    <footer class="footer">Use Arrow keys to move • P = Pause/Resume • Space to fire extra</footer>
-  </div>
+    <footer class="footer"><span>STARFALL <span class="brand-period">·</span> ARCADE SERIES 01</span><span>Stay sharp out there, pilot.</span></footer>
+  </main>
 
   <script src="game.js"></script>
 </body>
