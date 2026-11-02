@@ -34,6 +34,43 @@
           <button id="pauseBtn" class="game-pause-btn" type="button" aria-label="Pause game" title="Pause game">
             <span aria-hidden="true">Ⅱ</span>
           </button>
+          <div class="game-hud" aria-live="polite">
+            <span id="gameHudMode">STARFALL</span>
+            <span><span id="gameHudScore">0</span><span class="game-hud-divider">·</span><span id="gameHudLives">3 lives</span></span>
+          </div>
+          <section id="missionOverlay" class="mission-overlay" role="dialog" aria-modal="true" aria-labelledby="missionOverlayTitle" aria-describedby="missionOverlayInfo" hidden>
+            <div class="mission-card">
+              <p id="missionOverlayKicker" class="panel-kicker">MISSION BRIEFING</p>
+              <h2 id="missionOverlayTitle">Level 1</h2>
+              <p id="missionOverlayInfo" class="panel-copy">Destroy 7 meteors. You will have 3 lives.</p>
+              <div class="mission-actions">
+                <button id="missionLaunchBtn" class="btn primary" type="button">Launch mission <span aria-hidden="true">→</span></button>
+                <button id="missionBackBtn" class="btn secondary" type="button">Back to levels</button>
+              </div>
+            </div>
+          </section>
+          <section id="pausePanel" class="game-state-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
+            <div class="mission-card">
+              <p class="panel-kicker">FLIGHT PAUSED</p>
+              <h2 id="pauseTitle">Take a breather.</h2>
+              <p class="panel-copy">Your mission is on hold. Ready when you are.</p>
+              <div class="mission-actions">
+                <button id="resumeBtn" class="btn primary" type="button">Resume flight <span aria-hidden="true">→</span></button>
+                <button id="backToMenuFromPause" class="btn secondary" type="button">Quit to menu</button>
+              </div>
+            </div>
+          </section>
+          <section id="gameOverPanel" class="game-state-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+            <div class="mission-card">
+              <p class="panel-kicker">FLIGHT COMPLETE</p>
+              <h2 id="gameOverTitle">Game over</h2>
+              <p id="gameOverText" class="panel-copy">Final Score: 0</p>
+              <div class="mission-actions">
+                <button id="retryBtn" class="btn primary" type="button">Retry <span aria-hidden="true">→</span></button>
+                <button id="goToMenuBtn" class="btn secondary" type="button">Main menu</button>
+              </div>
+            </div>
+          </section>
         </div>
         <div class="control-hint">
           <span><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> MOVE</span>
@@ -70,36 +107,6 @@
           <div id="levelsContainer" class="levels-list" tabindex="0" aria-label="Available levels"></div>
           <div class="level-controls">
             <button id="backToMenuFromList" class="btn secondary" type="button">← Back to missions</button>
-          </div>
-        </div>
-
-        <div id="levelStart" class="panel hidden">
-          <p class="panel-kicker">MISSION BRIEFING</p>
-          <h2 id="levelStartTitle">Level 1</h2>
-          <p id="levelStartInfo" class="panel-copy">Objective</p>
-          <div class="btn-row">
-            <button id="startLevelBtn" class="btn primary" type="button">Launch mission <span aria-hidden="true">→</span></button>
-            <button id="cancelStartBtn" class="btn secondary" type="button">Back</button>
-          </div>
-        </div>
-
-        <div id="pausePanel" class="panel hidden">
-          <p class="panel-kicker">FLIGHT PAUSED</p>
-          <h2>Take a breather.</h2>
-          <p class="panel-copy">Your mission is on hold. Ready when you are.</p>
-          <div class="btn-row">
-            <button id="resumeBtn" class="btn primary" type="button">Resume flight <span aria-hidden="true">→</span></button>
-            <button id="backToMenuFromPause" class="btn secondary" type="button">Quit to menu</button>
-          </div>
-        </div>
-
-        <div id="gameOverPanel" class="panel hidden">
-          <p class="panel-kicker">FLIGHT COMPLETE</p>
-          <h2>Run it back?</h2>
-          <p id="gameOverText" class="panel-copy">Final Score: 0</p>
-          <div class="btn-row">
-            <button id="retryBtn" class="btn primary" type="button">Play again <span aria-hidden="true">→</span></button>
-            <button id="goToMenuBtn" class="btn secondary" type="button">Main menu</button>
           </div>
         </div>
 

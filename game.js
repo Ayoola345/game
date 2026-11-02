@@ -5,11 +5,6 @@ const ctx = canvas.getContext('2d');
 const menu = document.getElementById('menu');
 const levelListPanel = document.getElementById('levelList');
 const levelsContainer = document.getElementById('levelsContainer');
-const levelStartPanel = document.getElementById('levelStart');
-const levelStartTitle = document.getElementById('levelStartTitle');
-const levelStartInfo = document.getElementById('levelStartInfo');
-const startLevelBtn = document.getElementById('startLevelBtn');
-const cancelStartBtn = document.getElementById('cancelStartBtn');
 
 const pausePanel = document.getElementById('pausePanel');
 const resumeBtn = document.getElementById('resumeBtn');
@@ -28,7 +23,16 @@ const hudMode = document.getElementById('hudMode');
 const hudInfo = document.getElementById('hudInfo');
 const hudLives = document.getElementById('hudLives');
 const hudHigh = document.getElementById('hudHigh');
+const gameHudMode = document.getElementById('gameHudMode');
+const gameHudScore = document.getElementById('gameHudScore');
+const gameHudLives = document.getElementById('gameHudLives');
 const powerupStatus = document.getElementById('powerupStatus');
+const missionOverlay = document.getElementById('missionOverlay');
+const missionOverlayKicker = document.getElementById('missionOverlayKicker');
+const missionOverlayTitle = document.getElementById('missionOverlayTitle');
+const missionOverlayInfo = document.getElementById('missionOverlayInfo');
+const missionLaunchBtn = document.getElementById('missionLaunchBtn');
+const missionBackBtn = document.getElementById('missionBackBtn');
 
 const bossBar = document.createElement('div');
 bossBar.className = 'boss-bar';
@@ -57,6 +61,7 @@ canvas.width = 400; canvas.height = 600;
 let mode = null;                 // 'adventure' | 'infinity'
 let advLevel = 1;                // current adventure level to play
 let unlockedLevel = Number(localStorage.getItem(LS_UNLOCK) || 1);
+let missionBackToMenu = false;
 
 let bullets = [], meteors = [], particles = [], bossBullets = [], powerUps = [];
 let player = null;
@@ -193,8 +198,20 @@ function setUnlocked(n){ unlockedLevel = Math.max(1, Math.min(50, n)); localStor
 function getUnlocked(){ return Number(localStorage.getItem(LS_UNLOCK) || 1); }
 
 function showPanel(panel){
-  [menu, levelListPanel, levelStartPanel, pausePanel, gameOverPanel].forEach(p => p.classList.add('hidden'));
+  [menu, levelListPanel, pausePanel, gameOverPanel].forEach(p => p.classList.add('hidden'));
   if(panel) panel.classList.remove('hidden');
+}
+
+function setMobileView(view){
+  document.body.classList.toggle('game-active', view === 'game');
+  document.body.classList.toggle('level-select-active', view === 'levels');
+  window.scrollTo(0, 0);
+}
+
+function updateGameHud(){
+  gameHudMode.textContent = hudMode.textContent;
+  gameHudScore.textContent = hudInfo.textContent;
+  gameHudLives.textContent = `${lives} ${lives === 1 ? 'life' : 'lives'}`;
 }
 
 /* ---------------- Build level list (vertical scroll) ---------------- */
@@ -225,14 +242,41 @@ function buildLevelList(){
 function openLevelStart(lv){
   advLevel = lv;
   const cfg = getLevelConfig(lv);
-  levelStartTitle.textContent = cfg.type==='boss' ? `Level ${lv} — Boss` : `Level ${lv}`;
-  levelStartInfo.textContent = cfg.type==='boss' ? `Boss fight. You will have 3 lives.` : `Destroy ${cfg.meteorsToSpawn} meteors. You will have 3 lives.`;
   hudMode.textContent = `Adventure · L${lv}`;
-  showPanel(levelStartPanel);
+  showMissionBriefing(
+    'MISSION BRIEFING',
+    `Level ${lv}`,
+    getMissionObjective(cfg),
+    'Launch mission',
+    'Back to levels'
+  );
   lives = 3; hudLives.textContent = `${lives} / 3`;
+  updateGameHud();
   // set starfield stage
   const preset = STAGE_PRESETS[Math.min(STAGE_PRESETS.length-1, Math.floor((lv-1)/10))];
   starfield.setTarget({ starColor:preset.starColor, speed:preset.speed, density:preset.density });
+}
+
+function getMissionObjective(cfg){
+  return cfg.type === 'boss'
+    ? 'Defeat the boss. You will have 3 lives.'
+    : `Destroy ${cfg.meteorsToSpawn} meteors. You will have 3 lives.`;
+}
+
+function showMissionBriefing(kicker, title, description, launchLabel, backLabel, backToMenu = false){
+  setMobileView('game');
+  showPanel(null);
+  if(window.innerWidth > 760){
+    document.querySelector('.game-area').scrollIntoView({ block: 'center', behavior: 'auto' });
+  }
+  missionOverlayKicker.textContent = kicker;
+  missionOverlayTitle.textContent = title;
+  missionOverlayInfo.textContent = description;
+  missionLaunchBtn.innerHTML = `${launchLabel} <span aria-hidden="true">→</span>`;
+  missionBackBtn.textContent = backLabel;
+  missionBackToMenu = backToMenu;
+  missionOverlay.hidden = false;
+  requestAnimationFrame(() => missionLaunchBtn.focus({ preventScroll: true }));
 }
 
 /* ---------------- Start adventure level play ---------------- */
@@ -272,7 +316,10 @@ function startAdventureLevel(){
   hudInfo.textContent = `${score}`;
   hudLives.textContent = `${lives} / 3`;
   pauseBtn.hidden = false;
+  setMobileView('game');
+  updateGameHud();
   lastTs = performance.now();
+  missionOverlay.hidden = true;
   showPanel(null);
 }
 
@@ -377,6 +424,7 @@ function resumeGame(){
   pauseBtn.textContent = 'Ⅱ';
   pauseBtn.setAttribute('aria-label', 'Pause game');
   pauseBtn.title = 'Pause game';
+  missionOverlay.hidden = true;
   lastTs = now;
   showPanel(null);
 }
@@ -407,10 +455,13 @@ function startInfinity(){
   // starfield cycling speed can be set based on difficulty; use initial
   starfield.setTarget({ starColor: STAGE_PRESETS[0].starColor, speed: STAGE_PRESETS[0].speed, density: STAGE_PRESETS[0].density });
   mode = 'infinity'; gameStarted = true; gamePaused = false; gameOver = false;
+  missionOverlay.hidden = true;
   hudMode.textContent = 'Infinity';
   hudInfo.textContent = `${score}`;
   hudLives.textContent = `${lives} / 3`;
   pauseBtn.hidden = false;
+  setMobileView('game');
+  updateGameHud();
   lastTs = performance.now();
   showPanel(null);
 }
@@ -764,6 +815,7 @@ function loop(ts = performance.now()){
   hudInfo.textContent = `${score}`;
   hudLives.textContent = `${lives} / 3`;
   hudHigh.textContent = `${inftyHigh}`;
+  updateGameHud();
   updatePowerupStatus(effectTime);
 
   requestAnimationFrame(loop);
@@ -773,6 +825,7 @@ function loop(ts = performance.now()){
 function levelCleared(){
   if(!gameStarted) return;
   const next = advLevel + 1;
+  advLevel = next;
   if(next <= 50 && next > getUnlocked()) setUnlocked(next);
   powerUps = [];
   rapidFireUntil = 0; shieldUntil = 0;
@@ -780,8 +833,32 @@ function levelCleared(){
   gameStarted = false;
   gamePaused = false;
   pauseBtn.hidden = true;
-  buildLevelList();
-  showPanel(levelListPanel);
+  if(next <= 50){
+    const cfg = getLevelConfig(next);
+    hudMode.textContent = `Adventure · L${next}`;
+    lives = 3;
+    hudLives.textContent = `${lives} / 3`;
+    updateGameHud();
+    const preset = STAGE_PRESETS[Math.min(STAGE_PRESETS.length-1, Math.floor((next-1)/10))];
+    starfield.setTarget({ starColor:preset.starColor, speed:preset.speed, density:preset.density });
+    showMissionBriefing(
+      'MISSION COMPLETE · NEXT UP',
+      `Level ${next}`,
+      getMissionObjective(cfg),
+      'Launch next level',
+      'Main menu',
+      true
+    );
+  } else {
+    showMissionBriefing(
+      'CAMPAIGN COMPLETE',
+      'You cleared all 50 levels!',
+      'Incredible flying, pilot. Ready for another run?',
+      'Play Infinity',
+      'Main menu',
+      true
+    );
+  }
   hideBossBar(); stopAll();
 }
 
@@ -808,6 +885,7 @@ function handlePlayerHit(reason, now){
   if(now < playerInvulnerableUntil || now < shieldUntil || gameOver) return;
   lives = Math.max(0, lives - 1);
   hudLives.textContent = `${lives} / 3`;
+  updateGameHud();
   playerInvulnerableUntil = now + 1100;
   if(lives === 0){
     if(mode === 'infinity') onInfinityFail();
@@ -818,6 +896,7 @@ function handlePlayerHit(reason, now){
 /* ---------------- UI wiring ---------------- */
 btnAdventure.addEventListener('click', ()=> {
   mode = 'adventure';
+  setMobileView('levels');
   buildLevelList();
   showPanel(levelListPanel);
   hudMode.textContent = 'Adventure';
@@ -829,10 +908,21 @@ btnInfinity.addEventListener('click', ()=> {
 
 backToMenuFromList.addEventListener('click', ()=> { resetBase(); showPanel(menu); });
 
-startLevelBtn.addEventListener('click', ()=> {
-  startAdventureLevel();
+missionLaunchBtn.addEventListener('click', () => {
+  if(advLevel > 50) startInfinity();
+  else startAdventureLevel();
 });
-cancelStartBtn.addEventListener('click', ()=> { buildLevelList(); showPanel(levelListPanel); });
+missionBackBtn.addEventListener('click', () => {
+  missionOverlay.hidden = true;
+  if(missionBackToMenu || advLevel > 50){
+    resetBase();
+    showPanel(menu);
+  } else {
+    setMobileView('levels');
+    buildLevelList();
+    showPanel(levelListPanel);
+  }
+});
 
 resumeBtn.addEventListener('click', ()=> {
   resumeGame();
@@ -919,6 +1009,9 @@ function resetBase(){
   pauseBtn.textContent = 'Ⅱ';
   pauseBtn.setAttribute('aria-label', 'Pause game');
   pauseBtn.title = 'Pause game';
+  missionBackToMenu = false;
+  missionOverlay.hidden = true;
+  setMobileView('menu');
   Object.keys(keys).forEach(key => { keys[key] = false; });
   player = { x: canvas.width/2 - 22, y: canvas.height - 80, width:44, height:56, speed:4.4 };
   starfield.init(80); hideBossBar();
@@ -926,6 +1019,7 @@ function resetBase(){
   hudInfo.textContent = '0';
   hudLives.textContent = '—';
   hudHigh.textContent = `${inftyHigh}`;
+  updateGameHud();
   updatePowerupStatus(0);
 }
 function stopAll(){ lastSpawnTime = 0; lastAutoFire = 0; lastBossShoot = 0; }
