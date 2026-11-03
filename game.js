@@ -159,12 +159,11 @@ function getLevelConfig(lv){
   if(lv % 10 === 0){
     return { type:'boss', level:lv, bossHp: Math.round(30 + lv*1.8), bossShootInterval: Math.max(360, 1100 - lv*10), bossSpeedX: 1 + lv/40 };
   } else {
-    const base = 6 + Math.floor(lv * 0.9);
-    const variance = (lv % 3 === 0) ? 2 : 1;
-    const meteorsToSpawn = base + variance;
-    const meteorSpeed = parseFloat((1.0 + lv * 0.07 + (lv%5)*0.03).toFixed(2));
+    const meteorsToSpawn = 8 + Math.floor(lv * 1.15);
+    const meteorsPerWave = Math.min(4, 1 + Math.floor((lv - 1) / 12));
+    const meteorSpeed = parseFloat((1.1 + lv * 0.08).toFixed(2));
     const spawnInt = Math.max(220, Math.round(900 - lv * 11));
-    return { type:'normal', level:lv, meteorsToSpawn, meteorSpeed, spawnInterval: spawnInt };
+    return { type:'normal', level:lv, meteorsToSpawn, meteorsPerWave, meteorSpeed, spawnInterval: spawnInt };
   }
 }
 
@@ -223,7 +222,7 @@ function buildLevelList(){
     const item = document.createElement('div');
     item.className = 'level-item ' + (i<=unlocked ? 'unlocked' : 'locked');
     const left = document.createElement('div');
-    left.innerHTML = `<div class="level-number">Level ${i}</div><div class="level-meta">${cfg.type==='boss' ? 'Boss Level' : cfg.meteorsToSpawn + ' meteors • speed '+cfg.meteorSpeed}</div>`;
+    left.innerHTML = `<div class="level-number">Level ${i}</div><div class="level-meta">${cfg.type==='boss' ? 'Boss Level' : cfg.meteorsToSpawn + ' meteors · up to ' + cfg.meteorsPerWave + ' per wave · speed ' + cfg.meteorSpeed}</div>`;
     left.style.display='flex'; left.style.flexDirection='column';
     const actions = document.createElement('div'); actions.className='level-actions';
     const btn = document.createElement('button');
@@ -260,7 +259,7 @@ function openLevelStart(lv){
 function getMissionObjective(cfg){
   return cfg.type === 'boss'
     ? 'Defeat the boss. You will have 3 lives.'
-    : `Destroy ${cfg.meteorsToSpawn} meteors. You will have 3 lives.`;
+    : `Destroy ${cfg.meteorsToSpawn} meteors across ${Math.ceil(cfg.meteorsToSpawn / cfg.meteorsPerWave)} waves, with up to ${cfg.meteorsPerWave} falling at once. You will have 3 lives.`;
 }
 
 function showMissionBriefing(kicker, title, description, launchLabel, backLabel, backToMenu = false){
@@ -302,8 +301,7 @@ function startAdventureLevel(){
     showBossBar(1);
   } else {
     boss = null;
-    // spawn first meteor immediately
-    spawnAdventureMeteor(cfg); spawnCount++;
+    spawnAdventureWave(cfg);
     lastSpawnTime = performance.now();
   }
 
@@ -473,8 +471,7 @@ function handleSpawning(now, cfg){
     if(!lastSpawnTime) lastSpawnTime = now;
     if(spawnCount < cfg.meteorsToSpawn){
       if(now - lastSpawnTime >= cfg.spawnInterval){
-        spawnAdventureMeteor(cfg);
-        spawnCount++;
+        spawnAdventureWave(cfg);
         lastSpawnTime = now;
       }
     }
@@ -483,9 +480,19 @@ function handleSpawning(now, cfg){
   }
 }
 
-function spawnAdventureMeteor(cfg){
+function spawnAdventureMeteor(cfg, x){
   const swift = Math.random() < Math.min(0.32, 0.04 + cfg.level * 0.005);
-  spawnMeteor({ speed: cfg.meteorSpeed + (swift ? 0.9 : 0), swift });
+  spawnMeteor({ speed: cfg.meteorSpeed + (swift ? 0.9 : 0), swift, x });
+}
+
+function spawnAdventureWave(cfg){
+  const waveSize = Math.min(cfg.meteorsPerWave, cfg.meteorsToSpawn - spawnCount);
+  const laneWidth = canvas.width / (waveSize + 1);
+  for(let i = 0; i < waveSize; i++){
+    const x = clamp(laneWidth * (i + 1) - 32 + (Math.random() * 20 - 10), 0, canvas.width - 65);
+    spawnAdventureMeteor(cfg, x);
+  }
+  spawnCount += waveSize;
 }
 
 /* ---------------- Main loop ---------------- */
